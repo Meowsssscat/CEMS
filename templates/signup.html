@@ -72,8 +72,10 @@
                             id="student_id" 
                             name="student_id" 
                             class="form-input" 
-                            placeholder="Enter your student ID"
+                            placeholder="e.g. 0222-1831"
                             required
+                            pattern="^\d{4}-\d{4}$"
+                            title="ID format must be 4 digits, dash, and 4 digits (e.g. 0222-1831)"
                             autocomplete="off"
                             aria-describedby="student_id-error"
                         >
