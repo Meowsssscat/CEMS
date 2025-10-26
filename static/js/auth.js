@@ -164,7 +164,7 @@ function validateField(input) {
     // Student ID validation
     if (fieldName === 'student_id' && value && !isValidStudentId(value)) {
         isValid = false;
-        errorMessage = 'Please enter a valid student ID (numbers only).';
+        errorMessage = 'Please enter a valid student ID.';
     }
     
     // Password validation
@@ -210,17 +210,19 @@ function getFieldLabel(input) {
  * Validate email format
  */
 function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@lspu\.edu\.ph$/;
     return emailRegex.test(email);
 }
+
 
 /**
  * Validate student ID format
  */
 function isValidStudentId(studentId) {
-    const studentIdRegex = /^\d+$/;
-    return studentIdRegex.test(studentId) && studentId.length >= 6;
+    const studentIdRegex = /^02\d{2}-\d{4}$/;
+    return studentIdRegex.test(studentId);
 }
+
 
 /**
  * Show error message
