@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - CESMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/lspu-logo.png') }}" style="border-radius: 50%;">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Panel - Brand Side -->
+        <div class="auth-left-panel">
+            <div class="auth-brand">
+                <img src="{{ url_for('static', filename='images/lspu-logo.png') }}" alt="LSPU Logo" class="auth-logo">
+                <h1>CESMS</h1>
+                <p class="subtitle">Campus Event Management System</p>
+                <p class="university">Laguna State Polytechnic University</p>
+            </div>
+            
+            <ul class="auth-features">
+                <li>Manage Campus Events</li>
+                <li>Access Your Dashboard</li>
+                <li>Stay Connected</li>
+            </ul>
+        </div>
+
+        <!-- Right Panel - Form Side -->
+        <div class="auth-right-panel">
+            <div class="auth-form-container">
+                <!-- Flash Messages -->
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="flash-message {{ category }}">
+                                    <span>{{ message }}</span>
+                                    <button class="close-btn" aria-label="Close message">&times;</button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Form Header -->
+                <div class="auth-form-header">
+                    <h2>Welcome Back!</h2>
+                    <p>Sign in to continue to CESMS</p>
+                </div>
+
+                <!-- Login Form -->
+                <form class="auth-form" method="POST" novalidate>
+                    <div class="form-group">
+                        <label for="email" class="form-label required">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="Enter your email address"
+                            required
+                            autocomplete="email"
+                            aria-describedby="email-error"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label required">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Enter your password"
+                            required
+                            autocomplete="current-password"
+                            aria-describedby="password-error"
+                        >
+                    </div>
+
+                    <button type="submit" class="form-button">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Form Links -->
+                <div class="form-links">
+                    <p>Don't have an account? <a href="{{ url_for('user.signup') }}">Sign up here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

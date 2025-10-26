@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account - CESMS</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='images/lspu-logo.png') }}" style="border-radius: 50%;">
+</head>
+<body>
+    <div class="auth-container">
+        <!-- Left Panel - Brand Side -->
+        <div class="auth-left-panel">
+            <div class="auth-brand">
+                <img src="{{ url_for('static', filename='images/lspu-logo.png') }}" alt="LSPU Logo" class="auth-logo">
+                <h1>CESMS</h1>
+                <p class="subtitle">Campus Event Management System</p>
+                <p class="university">Laguna State Polytechnic University</p>
+            </div>
+            
+            <ul class="auth-features">
+                <li>Browse Upcoming Events</li>
+                <li>Easy Event Registration</li>
+                <li>Track Your Attendance</li>
+                <li>Stay Informed</li>
+            </ul>
+        </div>
+
+        <!-- Right Panel - Form Side -->
+        <div class="auth-right-panel">
+            <div class="auth-form-container">
+                <!-- Flash Messages -->
+                <div class="flash-messages">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="flash-message {{ category }}">
+                                    <span>{{ message }}</span>
+                                    <button class="close-btn" aria-label="Close message">&times;</button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                </div>
+
+                <!-- Form Header -->
+                <div class="auth-form-header">
+                    <h2>Welcome Kapiyu!</h2>
+                  
+                </div>
+
+                <!-- Signup Form -->
+                <form class="auth-form" method="POST" novalidate>
+                    <div class="form-group">
+                        <label for="full_name" class="form-label required">Full Name</label>
+                        <input 
+                            type="text" 
+                            id="full_name" 
+                            name="full_name" 
+                            class="form-input" 
+                            placeholder="Enter your full name"
+                            required
+                            autocomplete="name"
+                            aria-describedby="full_name-error"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="student_id" class="form-label required">Student ID Number</label>
+                        <input 
+                            type="text" 
+                            id="student_id" 
+                            name="student_id" 
+                            class="form-input" 
+                            placeholder="Enter your student ID"
+                            required
+                            autocomplete="off"
+                            aria-describedby="student_id-error"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label required">University Email</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-input" 
+                            placeholder="Enter your university email"
+                            required
+                            autocomplete="email"
+                            aria-describedby="email-error"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password" class="form-label required">Password</label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Create a strong password"
+                            required
+                            autocomplete="new-password"
+                            aria-describedby="password-error password-strength"
+                        >
+                        
+                        <!-- Password Strength Meter -->
+                        <div class="password-strength">
+                            <div class="strength-meter">
+                                <div class="strength-fill"></div>
+                            </div>
+                            <div class="strength-text"></div>
+                        </div>
+                        
+                        <!-- Password Requirements -->
+                        <div class="password-requirements">
+                            <div class="requirement">At least 8 characters</div>
+                            <div class="requirement">One uppercase letter</div>
+                            <div class="requirement">One lowercase letter</div>
+                            <div class="requirement">One number</div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="form-button">
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Form Links -->
+                <div class="form-links">
+                    <p>Already have an account? <a href="{{ url_for('user.login') }}">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>

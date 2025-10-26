@@ -1,0 +1,130 @@
+{% extends "base_osas.html" %}
+
+{% block title %}Event Request Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Event Request Management</h1>
+  <p>Review and approve/reject event requests from departments</p>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="request-summary">
+  <h2>Request Statistics</h2>
+  <div class="summary-cards">
+    <div class="summary-card">
+      <h3>Pending</h3>
+      <p class="count">{{ counts.Pending }}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Approved</h3>
+      <p class="count">{{ counts.Approved }}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Rejected</h3>
+      <p class="count">{{ counts.Rejected }}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Cancelled</h3>
+      <p class="count">{{ counts.Cancelled }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="requests-list">
+  <h2>Pending Event Requests</h2>
+  
+  {% if requests %}
+    <table class="requests-table">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Department</th>
+          <th>Location</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Participant Limit</th>
+          <th>Submitted On</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for req in requests %}
+        <tr>
+          <td>
+            <strong>{{ req.event_name }}</strong>
+            {% if req.description %}
+              <br><small>{{ req.description[:80] }}{% if req.description|length > 80 %}...{% endif %}</small>
+            {% endif %}
+          </td>
+          <td>
+            {% if req.users.department_name %}
+              {{ req.users.department_name }}
+            {% else %}
+              {{ req.users.full_name }}
+            {% endif %}
+            <br><small>{{ req.users.email }}</small>
+          </td>
+          <td>{{ req.location }}</td>
+          <td>{{ req.date }}</td>
+          <td>{{ req.start_time }} - {{ req.end_time }}</td>
+          <td>
+            {% if req.participant_limit %}
+              {{ req.participant_limit }}
+            {% else %}
+              Unlimited
+            {% endif %}
+          </td>
+          <td>{{ req.created_at[:10] }}</td>
+          <td>
+            <div class="action-buttons">
+              <a href="{{ url_for('event_request_management.approve_event_request', request_id=req.id) }}" 
+                 class="btn-approve"
+                 onclick="return confirm('Approve this event request? System will check for schedule conflicts.')">
+                Approve
+              </a>
+              <a href="{{ url_for('event_request_management.reject_event_request', request_id=req.id) }}" 
+                 class="btn-reject"
+                 onclick="return confirm('Reject this event request?')">
+                Reject
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="no-requests">
+      <p>No pending event requests at the moment.</p>
+    </div>
+  {% endif %}
+</div>
+
+<div class="info-box">
+  <h3>Approval Process:</h3>
+  <ul>
+    <li><strong>Schedule Conflict Check:</strong> System automatically checks for conflicts in location, date, and time</li>
+    <li><strong>Auto-Rejection:</strong> If a conflict is detected, the request will be automatically rejected</li>
+    <li><strong>Event Creation:</strong> Approved requests will automatically create an active event</li>
+    <li><strong>Department Notification:</strong> Departments can view their request status in their dashboard</li>
+  </ul>
+  
+  <h3>Conflict Detection Rules:</h3>
+  <ul>
+    <li>Two events cannot use the same location on the same date with overlapping times</li>
+    <li>Example: Event A (10:00-12:00) and Event B (11:00-13:00) at the same location = CONFLICT</li>
+    <li>Example: Event A (10:00-12:00) and Event B (12:00-14:00) at the same location = NO CONFLICT (adjacent times allowed)</li>
+  </ul>
+</div>
+
+{% endblock %}

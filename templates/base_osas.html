@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}OSAS Panel - CESMS{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/lspu-logo.png') }}" style="border-radius: 50%;">
+</head>
+<body>
+  <div class="dashboard-container">
+    <aside class="dashboard-sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <img src="{{ url_for('static', filename='images/lspu-logo.png') }}" alt="LSPU Logo" class="sidebar-brand-logo">
+        <div class="sidebar-brand-text">
+          <h1>CESMS</h1>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="{{ url_for('osas_dashboard') }}" class="nav-item">
+            <span class="nav-item-icon">📊</span>
+            <span class="nav-item-text">Dashboard</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Management</div>
+          <a href="{{ url_for('event_request_management.view_event_requests') }}" class="nav-item">
+            <span class="nav-item-icon">📝</span>
+            <span class="nav-item-text">Event Requests</span>
+          </a>
+          <a href="{{ url_for('osas_event_management.view_all_events') }}" class="nav-item">
+            <span class="nav-item-icon">⚙️</span>
+            <span class="nav-item-text">Event Management</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <a href="{{ url_for('user.logout') }}" class="nav-item logout">
+            <span class="nav-item-icon">🚪</span>
+            <span class="nav-item-text">Logout</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main" id="main-content">
+      <!-- Top Header -->
+      <header class="dashboard-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" aria-label="Toggle sidebar">
+            <span>☰</span>
+          </button>
+          <div class="header-info">
+            <h2 class="department-name">OSAS - Office of Student Affairs and Services</h2>
+            <nav class="breadcrumb">
+              <span>{% block breadcrumb %}{% endblock %}</span>
+            </nav>
+          </div>
+        </div>
+        
+    
+        
+      </header>
+
+      <!-- Content Area -->
+      <div class="dashboard-content">
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                  <span>{{ message }}</span>
+                  <button class="close-btn" aria-label="Close message">&times;</button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>
+
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay"></div>
+
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>

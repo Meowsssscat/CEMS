@@ -1,0 +1,148 @@
+{% extends "base_department.html" %}
+
+{% block title %}Request Event - CESMS{% endblock %}
+
+{% block content %}
+<!-- Request Event Page Styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/request-event.css') }}?v=4">
+
+<div class="page-container">
+
+  <!-- Form Container -->
+  <div class="form-container">
+    <!-- Page Header -->
+    <div class="page-header">
+      <h1>Submit Event Request</h1>
+      <p>Complete the form below to request a new campus event</p>
+    </div>
+ 
+    <!-- Form -->
+    <form method="POST" class="event-form" novalidate>
+      <!-- Section 1: Event Information -->
+      <div class="form-section">
+        <h2 class="section-title">Event Information</h2>
+        
+        <div class="form-group">
+          <label for="event_name" class="form-label required">Event Name</label>
+          <input 
+            type="text" 
+            id="event_name" 
+            name="event_name" 
+            class="form-input" 
+            required 
+            placeholder="Enter event name"
+            autocomplete="off"
+            aria-describedby="event_name-help"
+          >
+          <span id="event_name-help" class="form-help">Choose a clear, descriptive name for your event</span>
+        </div>
+
+        <div class="form-group">
+          <label for="description" class="form-label">Event Description</label>
+          <textarea 
+            id="description" 
+            name="description" 
+            class="form-textarea" 
+            rows="4" 
+            placeholder="Describe your event, its purpose, and what participants can expect"
+            aria-describedby="description-help"
+          ></textarea>
+          <span id="description-help" class="form-help">Help students understand what your event is about</span>
+        </div>
+      </div>
+
+      <!-- Section 2: Location & Timing -->
+      <div class="form-section">
+        <h2 class="section-title">Location & Timing</h2>
+
+        <div class="form-group">
+          <label for="location" class="form-label required">Event Location</label>
+          <input 
+            type="text" 
+            id="location" 
+            name="location" 
+            class="form-input" 
+            required 
+            placeholder="e.g., Main Auditorium, Room 101, Sports Complex"
+            autocomplete="off"
+            aria-describedby="location-help"
+          >
+          <span id="location-help" class="form-help">Specify the exact venue or location</span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date" class="form-label required">Event Date</label>
+            <input 
+              type="date" 
+              id="date" 
+              name="date" 
+              class="form-input" 
+              required
+              aria-describedby="date-help"
+            >
+            <span id="date-help" class="form-help">Minimum 7 days advance notice required</span>
+          </div>
+
+          <div class="form-group">
+            <label for="start_time" class="form-label required">Start Time</label>
+            <input 
+              type="time" 
+              id="start_time" 
+              name="start_time" 
+              class="form-input" 
+              required
+              aria-label="Event start time"
+            >
+          </div>
+
+          <div class="form-group">
+            <label for="end_time" class="form-label required">End Time</label>
+            <input 
+              type="time" 
+              id="end_time" 
+              name="end_time" 
+              class="form-input" 
+              required
+              aria-label="Event end time"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Event Settings -->
+      <div class="form-section">
+        <h2 class="section-title">Event Settings</h2>
+
+        <div class="form-group">
+          <label for="participant_limit" class="form-label">Participant Limit</label>
+          <input 
+            type="number" 
+            id="participant_limit" 
+            name="participant_limit" 
+            class="form-input" 
+            min="1" 
+            placeholder="Leave empty for unlimited"
+            aria-describedby="participant_limit-help"
+          >
+          <span id="participant_limit-help" class="form-help">Optional: Set maximum number of participants</span>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          Submit Request
+        </button>
+        <button type="reset" class="btn btn-secondary">
+          Clear Form
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Request Event Page JavaScript -->
+<script src="{{ url_for('static', filename='js/request-event.js') }}"></script>
+
+{% endblock %}

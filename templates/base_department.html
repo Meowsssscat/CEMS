@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Department Panel - CESMS{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/lspu-logo.png') }}" style="border-radius: 50%;">
+</head>
+<body>
+
+  <div class="dashboard-container">
+    <!-- Sidebar Navigation -->
+    <aside class="dashboard-sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <img src="{{ url_for('static', filename='images/lspu-logo.png') }}" alt="LSPU Logo" class="sidebar-brand-logo">
+        <div class="sidebar-brand-text">
+          <h1>CESMS</h1>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="{{ url_for('department_dashboard') }}" class="nav-item">
+            <span class="nav-item-icon">📊</span>
+            <span class="nav-item-text">Dashboard</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Events</div>
+          <a href="{{ url_for('event_request.request_event') }}" class="nav-item">
+            <span class="nav-item-icon">➕</span>
+            <span class="nav-item-text">Request Event</span>
+          </a>
+          <a href="{{ url_for('request_status.view_request_status') }}" class="nav-item">
+            <span class="nav-item-icon">📋</span>
+            <span class="nav-item-text">Request Status</span>
+          </a>
+          <a href="{{ url_for('event_registrations.view_event_registrations') }}" class="nav-item">
+            <span class="nav-item-icon">👥</span>
+            <span class="nav-item-text">Event Registrations</span>
+          </a>
+          <a href="{{ url_for('department_event_management.view_department_events') }}" class="nav-item">
+            <span class="nav-item-icon">⚙️</span>
+            <span class="nav-item-text">Manage Events</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <a href="{{ url_for('user.logout') }}" class="nav-item logout">
+            <span class="nav-item-icon">🚪</span>
+            <span class="nav-item-text">Logout</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="dashboard-main" id="main-content">
+      <!-- Top Header -->
+      <header class="dashboard-header">
+        <div class="header-left">
+          <button class="sidebar-toggle" aria-label="Toggle sidebar">
+            <span>☰</span>
+          </button>
+          <div class="header-info">
+            <h2 class="department-name">{{ session.get('department_name', 'Department') }}</h2>
+            <nav class="breadcrumb">
+              <span>{% block breadcrumb %}{% endblock %}</span>
+            </nav>
+          </div>
+        </div>
+        
+
+      </header>
+
+      <!-- Content Area -->
+      <div class="dashboard-content">
+        <!-- Flash Messages -->
+        <div class="flash-messages">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                  <span>{{ message }}</span>
+                  <button class="close-btn" aria-label="Close message">&times;</button>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+        </div>
+
+        <!-- Page Content -->
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+  </div>
+
+  <!-- Mobile Overlay -->
+  <div class="mobile-overlay"></div>
+
+  <script src="{{ url_for('static', filename='js/dashboard.js') }}?v=5"></script>
+</body>
+</html>

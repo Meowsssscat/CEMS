@@ -1,0 +1,149 @@
+{% extends "base_osas.html" %}
+
+{% block title %}Event Management{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>Event Management</h1>
+  <p>Manage all events across all departments</p>
+</div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="event-summary">
+  <h2>Event Statistics</h2>
+  <div class="summary-cards">
+    <div class="summary-card">
+      <h3>Active</h3>
+      <p class="count">{{ counts.Active }}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Completed</h3>
+      <p class="count">{{ counts.Completed }}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Cancelled</h3>
+      <p class="count">{{ counts.Cancelled }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="filter-section">
+  <h3>Filter by Status:</h3>
+  <div class="filter-buttons">
+    <a href="{{ url_for('osas_event_management.view_all_events', status='all') }}" 
+       class="filter-btn {% if status_filter == 'all' %}active{% endif %}">
+      All Events
+    </a>
+    <a href="{{ url_for('osas_event_management.view_all_events', status='active') }}" 
+       class="filter-btn {% if status_filter == 'active' %}active{% endif %}">
+      Active
+    </a>
+    <a href="{{ url_for('osas_event_management.view_all_events', status='completed') }}" 
+       class="filter-btn {% if status_filter == 'completed' %}active{% endif %}">
+      Completed
+    </a>
+    <a href="{{ url_for('osas_event_management.view_all_events', status='cancelled') }}" 
+       class="filter-btn {% if status_filter == 'cancelled' %}active{% endif %}">
+      Cancelled
+    </a>
+  </div>
+</div>
+
+<div class="events-list">
+  <h2>All Events</h2>
+  
+  {% if events %}
+    <table class="events-table">
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Department</th>
+          <th>Location</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Participant Limit</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for event in events %}
+        <tr>
+          <td>
+            <strong>{{ event.event_name }}</strong>
+            {% if event.description %}
+              <br><small>{{ event.description[:60] }}{% if event.description|length > 60 %}...{% endif %}</small>
+            {% endif %}
+          </td>
+          <td>
+            {% if event.users.department_name %}
+              {{ event.users.department_name }}
+            {% else %}
+              {{ event.users.full_name }}
+            {% endif %}
+          </td>
+          <td>{{ event.location }}</td>
+          <td>{{ event.date }}</td>
+          <td>{{ event.start_time }} - {{ event.end_time }}</td>
+          <td>
+            {% if event.participant_limit %}
+              {{ event.participant_limit }}
+            {% else %}
+              Unlimited
+            {% endif %}
+          </td>
+          <td>
+            <span class="status-badge status-{{ event.status.lower() }}">
+              {{ event.status }}
+            </span>
+          </td>
+          <td>
+            {% if event.status == 'Active' %}
+              <div class="action-buttons">
+                <a href="{{ url_for('osas_event_management.postpone_osas_event', event_id=event.id) }}" 
+                   class="btn-secondary">
+                  Postpone
+                </a>
+                <a href="{{ url_for('osas_event_management.cancel_osas_event', event_id=event.id) }}" 
+                   class="btn-danger"
+                   onclick="return confirm('Are you sure you want to cancel this event?')">
+                  Cancel
+                </a>
+              </div>
+            {% else %}
+              <span class="no-action">-</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="no-events">
+      <p>No events found for this filter.</p>
+    </div>
+  {% endif %}
+</div>
+
+<div class="info-box">
+  <h3>OSAS Event Management:</h3>
+  <ul>
+    <li><strong>Administrative Override:</strong> OSAS can manage any event from any department</li>
+    <li><strong>Cancel Event:</strong> Change event status to "Cancelled" (cannot be undone)</li>
+    <li><strong>Postpone Event:</strong> Reschedule event to a new date/time (with conflict check)</li>
+    <li><strong>Active Events:</strong> Events that are currently open for registration and attendance</li>
+    <li><strong>Completed Events:</strong> Events that have finished</li>
+    <li><strong>Cancelled Events:</strong> Events that were cancelled by department or OSAS</li>
+  </ul>
+</div>
+
+{% endblock %}

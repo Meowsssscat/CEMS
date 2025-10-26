@@ -1,0 +1,146 @@
+{% extends "base_department.html" %}
+
+{% block title %}Department Event Management{% endblock %}
+  
+{% block content %}
+
+<link rel="stylesheet" href="{{ url_for('static', filename='css/department_event_management.css') }}?v=1">
+
+
+
+
+<div class="event-summary">
+  <h2>Statistics</h2>
+  <div class="summary-cards">
+    <div class="summary-card">
+      <div class="card-icon">📅</div>
+      <h3>Active</h3>
+      <p class="count">{{ counts.Active }}</p>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon">✓</div>
+      <h3>Completed</h3>
+      <p class="count">{{ counts.Completed }}</p>
+    </div>
+    <div class="summary-card">
+      <div class="card-icon">✕</div>
+      <h3>Cancelled</h3>
+      <p class="count">{{ counts.Cancelled }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="filter-section">
+  <h3>Filter by Status:</h3>
+  <div class="filter-buttons">
+    <a href="{{ url_for('department_event_management.view_department_events', status='all') }}" 
+       class="filter-btn {% if status_filter == 'all' %}active{% endif %}">
+      All Events
+    </a>
+    <a href="{{ url_for('department_event_management.view_department_events', status='active') }}" 
+       class="filter-btn {% if status_filter == 'active' %}active{% endif %}">
+      Active
+    </a>
+    <a href="{{ url_for('department_event_management.view_department_events', status='completed') }}" 
+       class="filter-btn {% if status_filter == 'completed' %}active{% endif %}">
+      Completed
+    </a>
+    <a href="{{ url_for('department_event_management.view_department_events', status='cancelled') }}" 
+       class="filter-btn {% if status_filter == 'cancelled' %}active{% endif %}">
+      Cancelled
+    </a>
+  </div>
+</div>
+
+<div class="events-list">
+  <h2>Event/s</h2>
+  
+  {% if events %}
+    <div class="event-cards">
+      {% for event in events %}
+      <div class="event-card" data-status="{{ event.status.lower() }}">
+        <div class="card-header">
+          <div class="event-title-section">
+            <h3 class="event-title">{{ event.event_name }}</h3>
+            <span class="status-badge status-{{ event.status.lower() }}">
+              {{ event.status }}
+            </span>
+          </div>
+          {% if event.description %}
+            <p class="event-description">{{ event.description }}</p>
+          {% endif %}
+        </div>
+        
+        <div class="card-body">
+          <div class="event-details-grid">
+            <div class="detail-item">
+              <span class="detail-icon">📍</span>
+              <div class="detail-content">
+                <span class="detail-label">Location</span>
+                <span class="detail-value">{{ event.location }}</span>
+              </div>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-icon">📅</span>
+              <div class="detail-content">
+                <span class="detail-label">Date</span>
+                <span class="detail-value">{{ event.date }}</span>
+              </div>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-icon">🕐</span>
+              <div class="detail-content">
+                <span class="detail-label">Time</span>
+                <span class="detail-value">{{ event.start_time }} - {{ event.end_time }}</span>
+              </div>
+            </div>
+            
+            <div class="detail-item">
+              <span class="detail-icon">👥</span>
+              <div class="detail-content">
+                <span class="detail-label">Participant Limit</span>
+                <span class="detail-value">
+                  {% if event.participant_limit %}
+                    {{ event.participant_limit }}
+                  {% else %}
+                    Unlimited
+                  {% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="card-footer">
+          {% if event.status == 'Active' %}
+            <a href="{{ url_for('department_event_management.postpone_department_event', event_id=event.id) }}" 
+               class="btn-secondary">
+              <span class="btn-icon">⏸</span>
+              Postpone
+            </a>
+            <a href="{{ url_for('department_event_management.cancel_department_event', event_id=event.id) }}" 
+               class="btn-danger"
+               onclick="return confirm('Are you sure you want to cancel this event?')">
+              <span class="btn-icon">✕</span>
+              Cancel
+            </a>
+          {% else %}
+            <span class="no-action">No actions available</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-events">
+      <div class="no-events-icon">📭</div>
+      <p>No events found for this filter.</p>
+      <small>Try selecting a different filter or create a new event.</small>
+    </div>
+  {% endif %}
+</div>
+
+<script src="{{ url_for('static', filename='js/department_event_management.js') }}?v=1"></script>
+{% endblock %}

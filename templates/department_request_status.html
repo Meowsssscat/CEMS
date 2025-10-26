@@ -1,0 +1,199 @@
+{% extends "base_department.html" %}
+
+{% block title %}Request Status - CESMS{% endblock %}
+
+{% block content %}
+<!-- Request Status Page Styles -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/request-status.css') }}?v=1">
+
+<div class="request-status-container">
+  <!-- Flash Messages -->
+  
+
+
+
+  <!-- Status Summary Cards -->
+  <div class="status-summary-section">
+    <div class="summary-cards">
+      <div class="summary-card pending">
+        <div class="card-icon">
+          <span class="icon">⏳</span>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Pending</h3>
+          <p class="card-count">{{ status_counts['Pending'] }}</p>
+          <p class="card-subtitle">Under Review</p>
+        </div>
+      </div>
+      
+      <div class="summary-card approved">
+        <div class="card-icon">
+          <span class="icon">✅</span>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Approved</h3>
+          <p class="card-count">{{ status_counts['Approved'] }}</p>
+          <p class="card-subtitle">Ready to Go</p>
+        </div>
+      </div>
+      
+      <div class="summary-card rejected">
+        <div class="card-icon">
+          <span class="icon">❌</span>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Rejected</h3>
+          <p class="card-count">{{ status_counts['Rejected'] }}</p>
+          <p class="card-subtitle">Needs Changes</p>
+        </div>
+      </div>
+      
+      <div class="summary-card cancelled">
+        <div class="card-icon">
+          <span class="icon">🚫</span>
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">Cancelled</h3>
+          <p class="card-count">{{ status_counts['Cancelled'] }}</p>
+          <p class="card-subtitle">Withdrawn</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="filter-section">
+    <div class="filter-header">
+      <h3 class="filter-title">Filter Requests</h3>
+      <p class="filter-subtitle">View requests by status</p>
+    </div>
+    <div class="filter-buttons">
+      <a href="{{ url_for('request_status.view_request_status', status='all') }}" 
+         class="filter-btn {% if status_filter == 'all' %}active{% endif %}">
+        <span class="btn-icon">📊</span>
+        All Requests
+      </a>
+      <a href="{{ url_for('request_status.view_request_status', status='pending') }}" 
+         class="filter-btn {% if status_filter == 'pending' %}active{% endif %}">
+        <span class="btn-icon">⏳</span>
+        Pending
+      </a>
+      <a href="{{ url_for('request_status.view_request_status', status='approved') }}" 
+         class="filter-btn {% if status_filter == 'approved' %}active{% endif %}">
+        <span class="btn-icon">✅</span>
+        Approved
+      </a>
+      <a href="{{ url_for('request_status.view_request_status', status='rejected') }}" 
+         class="filter-btn {% if status_filter == 'rejected' %}active{% endif %}">
+        <span class="btn-icon">❌</span>
+        Rejected
+      </a>
+      <a href="{{ url_for('request_status.view_request_status', status='cancelled') }}" 
+         class="filter-btn {% if status_filter == 'cancelled' %}active{% endif %}">
+        <span class="btn-icon">🚫</span>
+        Cancelled
+      </a>
+    </div>
+  </div>
+
+  <!-- Requests List -->
+  <div class="requests-section">
+    {% if requests %}
+      <div class="requests-grid">
+        {% for req in requests %}
+        <div class="request-card">
+          <div class="request-header">
+            <div class="request-title-section">
+              <h3 class="request-title">{{ req.event_name }}</h3>
+              <div class="request-meta">
+                <span class="request-date">{{ req.date }}</span>
+                <span class="request-time">{{ req.start_time }} - {{ req.end_time }}</span>
+              </div>
+            </div>
+            <div class="request-status">
+              <span class="status-badge status-{{ req.status.lower() }}">
+                {{ req.status }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="request-content">
+            <div class="request-details">
+              <div class="detail-item">
+                <span class="detail-icon">📍</span>
+                <span class="detail-label">Location:</span>
+                <span class="detail-value">{{ req.location }}</span>
+              </div>
+              {% if req.description %}
+              <div class="detail-item">
+                <span class="detail-icon">📝</span>
+                <span class="detail-label">Description:</span>
+                <span class="detail-value">{{ req.description[:100] }}{% if req.description|length > 100 %}...{% endif %}</span>
+              </div>
+              {% endif %}
+              <div class="detail-item">
+                <span class="detail-icon">📅</span>
+                <span class="detail-label">Submitted:</span>
+                <span class="detail-value">{{ req.created_at[:10] }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="request-actions">
+            {% if req.status == 'Pending' %}
+              <div class="action-buttons">
+                <a href="{{ url_for('request_status.edit_request', id=req.id) }}" 
+                   class="btn btn-secondary btn-sm">
+                  <span class="btn-icon">✏️</span>
+                  Edit
+                </a>
+                <a href="{{ url_for('request_status.cancel_request', id=req.id) }}" 
+                   class="btn btn-warning btn-sm"
+                   onclick="return confirm('Are you sure you want to cancel this request? It will remain in your history.')">
+                  <span class="btn-icon">🚫</span>
+                  Cancel
+                </a>
+                <a href="{{ url_for('request_status.delete_request', id=req.id) }}" 
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Are you sure you want to permanently delete this request?')">
+                  <span class="btn-icon">🗑️</span>
+                  Delete
+                </a>
+              </div>
+            {% else %}
+              <div class="no-actions">
+                <span class="no-action-text">No actions available</span>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-requests">
+        <div class="no-requests-content">
+          <div class="no-requests-icon">
+            <span class="icon">📋</span>
+          </div>
+          <h3 class="no-requests-title">No Event Requests Found</h3>
+          <p class="no-requests-subtitle">
+            {% if status_filter == 'all' %}
+              You haven't submitted any event requests yet.
+            {% else %}
+              No {{ status_filter }} requests found.
+            {% endif %}
+          </p>
+          <a href="{{ url_for('event_request.request_event') }}" class="btn btn-primary btn-lg">
+            <span class="btn-icon">➕</span>
+            Submit New Request
+          </a>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Request Status Page JavaScript -->
+<script src="{{ url_for('static', filename='js/request-status.js') }}?v=1"></script>
+
+{% endblock %}

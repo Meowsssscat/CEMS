@@ -1,0 +1,150 @@
+{% extends "base_department.html" %}
+
+{% block title %}{{ event.event_name }} - Registrations{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h1>{{ event.event_name }} - Registration Details</h1>
+  <a href="{{ url_for('event_registrations.view_event_registrations') }}" class="btn-back">← Back to Events</a>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/department_event_registration_details.css') }}?v=1">
+</div>
+
+
+
+<div class="event-info-summary">
+  <h2>Event Information</h2>
+  <div class="info-grid">
+    <div class="info-item">
+      <strong>Date:</strong> {{ event.date }}
+    </div>
+    <div class="info-item">
+      <strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}
+    </div>
+    <div class="info-item">
+      <strong>Location:</strong> {{ event.location }}
+    </div>
+    <div class="info-item">
+      <strong>Participant Limit:</strong> 
+      {% if event.participant_limit %}
+        {{ event.participant_limit }}
+      {% else %}
+        Unlimited
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="registration-summary">
+  <h2>Registration Statistics</h2>
+  <div class="summary-cards">
+    <div class="summary-card">
+      <h3>Pending</h3>
+      <p class="count">{{ counts.Pending }}</p>
+    </div>
+    <div class="summary-card">
+      <h3>Approved</h3>
+      <p class="count">{{ counts.Approved }}</p>
+    </div>
+    
+    <div class="summary-card">
+      <h3>Rejected</h3>
+      <p class="count">{{ counts.Rejected }}</p>
+    </div>
+  </div>
+</div>
+
+<div class="filter-section">
+  <h3>Filter by Status:</h3>
+  <div class="filter-buttons">
+    <a href="{{ url_for('event_registrations.view_event_registration_details', event_id=event.id, status='all') }}" 
+       class="filter-btn {% if status_filter == 'all' %}active{% endif %}">
+      All
+    </a>
+    <a href="{{ url_for('event_registrations.view_event_registration_details', event_id=event.id, status='pending') }}" 
+       class="filter-btn {% if status_filter == 'pending' %}active{% endif %}">
+      Pending
+    </a>
+    <a href="{{ url_for('event_registrations.view_event_registration_details', event_id=event.id, status='approved') }}" 
+       class="filter-btn {% if status_filter == 'approved' %}active{% endif %}">
+      Approved
+    </a>
+  
+    <a href="{{ url_for('event_registrations.view_event_registration_details', event_id=event.id, status='rejected') }}" 
+       class="filter-btn {% if status_filter == 'rejected' %}active{% endif %}">
+      Rejected
+    </a>
+  </div>
+</div>
+
+<!-- Replace the registrations-list section with this card-based structure -->
+
+<div class="registrations-list">
+  <h2>Registration/s</h2>
+  
+  {% if registrations %}
+    <div class="registration-cards">
+      {% for reg in registrations %}
+      <div class="registration-card">
+        <div class="card-header">
+          <div class="student-name">{{ reg.users.full_name }}</div>
+          <div class="student-id">{{ reg.users.student_id }}</div>
+        </div>
+        
+        <div class="card-body">
+          <div class="card-info-row">
+            <span class="info-label">Email</span>
+            <span class="info-value">{{ reg.users.email }}</span>
+          </div>
+          
+          <div class="card-info-row">
+            <span class="info-label">Status</span>
+            <span class="status-badge status-{{ reg.registration_status.lower().replace('-', '') }}">
+              {{ reg.registration_status }}
+            </span>
+          </div>
+          
+          <div class="card-info-row">
+            <span class="info-label">Registered On</span>
+            <span class="info-value">{{ reg.created_at[:10] }}</span>
+          </div>
+        </div>
+        
+        <div class="qr-section">
+          <span class="info-label">QR Code</span>
+          {% if reg.unique_code %}
+            <div class="qr-indicator">Generated</div>
+            <div class="qr-code-text">{{ reg.unique_code[:8] }}...</div>
+          {% else %}
+            <div class="qr-indicator-none">Not Generated</div>
+          {% endif %}
+        </div>
+        
+        <div class="card-actions">
+          {% if reg.registration_status == 'Pending' %}
+            <a href="{{ url_for('event_registrations.approve_registration', registration_id=reg.id, event_id=event.id) }}" 
+               class="btn-approve"
+               onclick="return confirm('Approve this registration? A QR code will be generated.')">
+              Approve
+            </a>
+            <a href="{{ url_for('event_registrations.reject_registration', registration_id=reg.id, event_id=event.id) }}" 
+               class="btn-reject"
+               onclick="return confirm('Reject this registration?')">
+              Reject
+            </a>
+          {% else %}
+            <span class="no-action">No actions available</span>
+          {% endif %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="no-registrations">
+      <p>No registrations found for this filter.</p>
+    </div>
+  {% endif %}
+</div>
+
+
+<script src="{{ url_for('static', filename='js/department_event_registration_details.js') }}?v=1"></script>
+{% endblock %}
