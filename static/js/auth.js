@@ -210,9 +210,10 @@ function getFieldLabel(input) {
  * Validate email format
  */
 function isValidEmail(email) {
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@lspu\.edu\.ph$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
 }
+
 
 
 /**
